@@ -124,6 +124,12 @@ class Connection
             InternalOpen(sqlite3_open16, filename);
         }
 
+        // to be able to get the las RowId inserted
+        long RowId() const noexcept
+        {
+            return sqlite3_last_insert_rowid(GetAbi());
+        }
+
 
 };
 
