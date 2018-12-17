@@ -135,3 +135,22 @@ for(Row const & row : statement)
     std::cout << row.GetString(0) << "\n";
 }
 ```
+
+### Use case 1:
+
+```C++
+// creating a database entirely in memory
+Connection connection = Connection::Memory();
+
+Execute(connection, "create table Users (Id primary key, Name)");
+
+Execute(connection, "insert into Users (Id, Name) values (?, ?)", 1, "Eduardo");
+Execute(connection, "insert into Users (Id, Name) values (?, ?)", 2, "Ana Belen");
+Execute(connection, "insert into Users (Id, Name) values (?, ?)", 3, "Juanisimo");
+Execute(connection, "insert into Users (Id, Name) values (?, ?)", 4, "Angelo");
+
+for (Row row : Statement(connection, "select Id, Name from Users"))
+{
+    std::cout << row.GetInt(0) << ", " << row.GetString(1) << "\n";
+}
+```

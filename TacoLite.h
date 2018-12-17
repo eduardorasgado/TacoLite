@@ -137,6 +137,14 @@ struct Reader
         // doing a static cast because GetAbi is a const method
         return sqlite3_column_int(static_cast<T const *>(this)->GetAbi(), column);
     }
+
+    // to be able to read rows by columns in the controller or main
+    double GetFloat(int const column = 0) const noexcept
+    {
+        // doing a static cast because GetAbi is a const method
+        return sqlite3_column_double(static_cast<T const *>(this)->GetAbi(), column);
+    }
+
     char const * GetString(int const column = 0) const noexcept
     {
         return reinterpret_cast<char const *>(sqlite3_column_text(
