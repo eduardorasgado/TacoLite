@@ -48,6 +48,12 @@ int main() {
         }
         Execute(connection, "commit");
 
+        // size in backup: free all pages in backup test
+        Execute(connection, "delete from Things where Content > 20");
+        // vacumm the database before saving to disk
+        // this will delete all free pages in the database before saving
+        Execute(connection, "vacuum");
+
         // creating a backup if a in memory database
         SaveToDisk(connection,"/home/cheetos/Developer/CProgramming/TacoLite/backup.db");
 
