@@ -408,6 +408,16 @@ class Statement : public Reader<Statement>
             // passing all the uncertain values
             InternalBind(1, std::forward<Values>(values) ...);
         }
+
+        template <typename ... Values>
+        void Reset(Values && ... values) const {
+            // in order to reset the sqlite state machine
+            if(SQLITE_OK != sqlite3_reset(GetAbi()))
+            {
+                ThrowLastError();
+            }
+            BindAll(values ...);
+        }
 };
 
 class RowIterator
