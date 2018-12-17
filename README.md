@@ -18,14 +18,13 @@ foo@bar :~$ cmake --build .
 ``` 
 
 ## How to use
-sqlite-amalgamation folder is standalone, and it is not used in the project(because we installed it using Conan).\
-Handle.h and SQLite.h are the celebrities here.\
-Once sqlite is installed in your project by using conan, you can interact with sqlite in a easy way.
+Handle.h and TacoLite.h are the celebrities here.\
+Once TacoLite is installed in your project by using conan, you can interact with sqlite in a easy way.
 
 ### Include in your project
 
 ```C++
-#include "SQLite.h"
+#include "TacoLite.h"
 ```
 
 Now, be careful and try to using try and catch when using TacoLite.
@@ -36,7 +35,7 @@ Connection connection = Connection::Memory();
 
 // Creating connection and statement handler and doing the query at the same time
 // preparing the query inside the Statement constructor by calling no member function
-// Execute in sqlite.h
+// Execute in TacoLite.h
 Execute(connection, "create table Users (Name)");
 Execute(connection, "insert into Users values (?)", "Eduardo");
 Execute(connection, "insert into Users values (?)", "Ana Belen");

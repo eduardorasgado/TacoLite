@@ -7,5 +7,5 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 #set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG "_DEBUG")
 
-add_executable(SQLiteInteraction main.cpp Handle.h SQLite.h)
+add_executable(SQLiteInteraction main.cpp Handle.h TacoLite.h)
 target_link_libraries(SQLiteInteraction ${CONAN_LIBS})

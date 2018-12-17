@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "SQLite.h"
+#include "TacoLite.h"
 
 int main() {
     // Exaple using TACO LITE.
