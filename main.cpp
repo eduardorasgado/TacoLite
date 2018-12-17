@@ -32,6 +32,29 @@ int main() {
          * YOUR CODE HERE
          */
 
+        Connection connection = Connection::Memory();
+
+        Execute(connection, "create table Things (Content real)");
+
+        Statement statement(connection, "insert into Things values (?)");
+
+        Execute(connection, "begin");
+
+        // inserting a million rows
+        for (int i = 0; i < 1000000; ++i) {
+            statement.Reset(i);
+            statement.Execute();
+        }
+        Execute(connection, "commit");
+
+        // creating a backup if a in memory database
+
+
+        Statement count(connection, "select count(*) from Things");
+        // executing the statement
+        count.Step();
+        std::cout << "Rows: " << count.GetInt() << std::endl;
+
     } catch(Exception const & e)
     {
         // c_str: Returns a pointer to an array that contains a

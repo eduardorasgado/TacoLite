@@ -101,6 +101,7 @@ class Connection
             return static_cast<bool>(m_handle);
         }
 
+        // Application binary interface
         sqlite3 * GetAbi() const noexcept
         {
             return m_handle.Get();
@@ -136,6 +137,69 @@ class Connection
         {
             // profiling the connection to increase the performance
             sqlite3_profile(GetAbi(), callback, context);
+        }
+};
+
+// BACKUP CLASS:
+/*
+ * Useful when remote servers or want to persist data from a in memory db
+ * Useful when want to backup a live database
+ * */
+class Backup
+{
+        struct BackupHandleTraits : HandleTraits<sqlite3_backup *>
+        {
+            // Type from Handle class
+            static void Close(Type value) noexcept
+            {
+                sqlite3_backup_finish(value);
+            }
+        };
+
+        // creating an alias
+        using BackupHandle = Handle<BackupHandleTraits>;
+        BackupHandle m_handle;
+
+        // where error information is available in case a failure
+        Connection const * m_destination = nullptr;
+
+    public:
+        // source and destination databases
+        Backup(Connection const & destination, Connection const & source,
+                char const * const destinationName = "main",
+                char const * const sourceName = "main") :
+                // in backup handle, initialized with destination handle, name, source
+                //handle and source name
+                m_handle{sqlite3_backup_init(destination.GetAbi(),
+                        destinationName, source.GetAbi(), sourceName)},
+                m_destination{&destination}
+        {
+            // checking if nothing is going wrong
+            if(!m_handle){ destination.ThrowLastError(); }
+        }
+
+        // Backup class Application binary interface
+        sqlite3_backup * GetAbi() const noexcept
+        {
+            return m_handle.Get();
+        }
+
+        // all remainded pages should be copied that is -1
+        bool Step(int const pages = -1)
+        {
+            // executed one or more times to copy all of the data from the
+            // source to the destination db before the backup object is destroyed
+            int const result = sqlite3_backup_step(GetAbi(), pages);
+
+            // success of completition notification
+            if(result == SQLITE_OK) return true;
+            //copy is concluded
+            if(result == SQLITE_DONE) return false;
+
+            // it is needed that destination only receives backup informatioon
+            // only when the backup object is destroyed
+            m_handle.Reset();
+            m_destination->ThrowLastError();
         }
 };
 
