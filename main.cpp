@@ -3,6 +3,7 @@
 
 #include "TacoLite.h"
 
+// This is not part of the library, it is just to prove types in db fields
 // to be able ti string without not converting types to string
 // Type in the TacoLite library
 static char const * TypeName(Type const type)
@@ -48,7 +49,7 @@ int main() {
         Execute(connection, "commit");
 
         // creating a backup if a in memory database
-
+        SaveToDisk(connection,"/home/cheetos/Developer/CProgramming/TacoLite/backup.db");
 
         Statement count(connection, "select count(*) from Things");
         // executing the statement

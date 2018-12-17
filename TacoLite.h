@@ -553,3 +553,11 @@ void Execute(Connection const & connection, C const * const text,
 {
     Statement(connection, text, std::forward<Values>(values) ...).Execute();
 }
+
+static void SaveToDisk(Connection const & source, char const * const filename)
+{
+    Connection destination(filename);
+    Backup backup(destination, source);
+    // executing the save of the data, from source to destination
+    backup.Step();
+}
