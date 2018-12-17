@@ -19,6 +19,16 @@
 #define VERIFY_(result, expression) (expression)
 #endif
 
+enum class Type
+{
+        // type system in cqlite3
+        Integer = SQLITE_INTEGER,
+        Float = SQLITE_FLOAT,
+        Blob = SQLITE_BLOB,
+        Null = SQLITE_NULL,
+        Text = SQLITE_TEXT,
+};
+
 // Turning error into exceptions
 struct Exception
 {
@@ -150,6 +160,12 @@ struct Reader
     int GetWideStringLength(int const column = 0) const noexcept
     {
         return sqlite3_column_bytes16(static_cast<T const *>(this)->GetAbi(), column) / sizeof(wchar_t);
+    }
+
+    Type GetType(int const column = 0) const noexcept
+    {
+        // hanlding sqlite3 dynamic type selection
+        return static_cast<Type>(sqlite3_column_type(static_cast<T const *>(this)->GetAbi(), column));
     }
 };
 
@@ -296,6 +312,22 @@ class Statement : public Reader<Statement>
             {
                 ThrowLastError();
             }
+        }
+
+        // double binding
+        void Bind(int const index, double const value) const
+        {
+            // zero is not valid in sql index
+            // binding inside logic
+            if(SQLITE_OK != sqlite3_bind_double(GetAbi(), index, value))
+            {
+                ThrowLastError();
+            }
+        }
+
+        void Bind(int const index, float const value) const
+        {
+            Bind(index, static_cast<double>(value));
         }
 
         // characters
