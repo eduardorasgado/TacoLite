@@ -47,6 +47,7 @@ class Connection
         // to manipulate sqlite connections as handles
         struct ConnectionHandleTraits : HandleTraits<sqlite3 *>
         {
+            //close the file
             static void Close(Type value) noexcept
             {
                 // call the macro instead
@@ -64,7 +65,7 @@ class Connection
         void InternalOpen(F open, C const * const filename)
         {
             Connection temp;
-
+            // open the database file
             if(SQLITE_OK != open(filename, temp.m_handle.Set()))
             {
                 // reporting error
@@ -125,12 +126,17 @@ class Connection
         }
 
         // to be able to get the las RowId inserted
-        long RowId() const noexcept
+        long long RowId() const noexcept
         {
             return sqlite3_last_insert_rowid(GetAbi());
         }
 
-
+        template <typename F>
+        void Profile(F callback, void * const context = nullptr)
+        {
+            // profiling the connection to increase the performance
+            sqlite3_profile(GetAbi(), callback, context);
+        }
 };
 
 // ROW READER FOR STATEMENTS
